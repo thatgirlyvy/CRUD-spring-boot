@@ -12,7 +12,7 @@ public class Employee {
   private String firstName;
   private String lastName;
   private Position position;
-  private Date startDate;
+  private Date startDate; // Date n'est plus recommandé depuis Java 8. Regardes LocalDate ou LocalDateTime
   private BigDecimal salary;
 
   public UUID getId() {

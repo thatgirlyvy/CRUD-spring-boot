@@ -1,13 +1,19 @@
 package com.example.springbootcrud.controller;
 
 import java.math.BigDecimal;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.*;
 
 import com.example.springbootcrud.model.Position;
+import com.example.springbootcrud.model.dto.EmployeeFilterDTO;
+
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.server.ResponseStatusException;
+
 import com.example.springbootcrud.model.Employee;
 import com.example.springbootcrud.service.EmployeeService;
 
@@ -34,10 +40,26 @@ public class EmployeesController {
 
   @GetMapping
   public ResponseEntity<List<Employee>> list(@RequestParam(required = false) String firstName, @RequestParam(required = false) String lastName,
-                                             @RequestParam(required = false)Position position, @RequestParam(required = false) Date startDate,
-                                             @RequestParam(required = false)BigDecimal salary, @RequestParam(defaultValue = "0") Integer page, @RequestParam(defaultValue = "5") Integer pageSize, @RequestParam(defaultValue = "id") String field) {
-    List<Employee> list = employeeService.list(firstName, lastName, position, startDate, salary, page, pageSize, field);
-    return new ResponseEntity<List<Employee>>(list, new HttpHeaders(), HttpStatus.OK);
+                                             @RequestParam(required = false) String position, @RequestParam(required = false) String startDate,
+                                             @RequestParam(required = false) BigDecimal salary, @RequestParam(defaultValue = "0") Integer page, @RequestParam(defaultValue = "5") Integer pageSize, @RequestParam(defaultValue = "id") String field) {
+    
+        SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
+
+        try {
+          
+          Date start = dateFormat.parse(startDate);
+
+          Position pos = Position.valueOf(position.toUpperCase());
+
+          EmployeeFilterDTO dto = new EmployeeFilterDTO(firstName, lastName, pos, start, salary);
+
+          List<Employee> employees = employeeService.find(page, pageSize, field, dto);
+
+          return ResponseEntity.ok(employees);
+
+        } catch (ParseException e) {
+          throw new ResponseStatusException(HttpStatus.BAD_REQUEST);
+        }                                            
   }
 
   @PostMapping
