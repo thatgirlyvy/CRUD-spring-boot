@@ -7,8 +7,9 @@ import java.util.Optional;
 import java.util.UUID;
 
 import com.example.springbootcrud.model.Position;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.domain.Page;
+import com.example.springbootcrud.model.dto.EmployeeFilterDTO;
+import org.springframework.data.domain.Example;
+import org.springframework.data.domain.ExampleMatcher;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
@@ -17,9 +18,8 @@ import com.example.springbootcrud.model.Employee;
 import com.example.springbootcrud.repository.EmployeeRepository;
 
 @Service
-
 public class EmployeeService {
-  @Autowired
+
   private final EmployeeRepository employeeRepository;
 
   public EmployeeService(EmployeeRepository employeeRepository) {
@@ -45,6 +45,28 @@ public class EmployeeService {
   public List<Employee> list(String firstName, String lastName, Position position, Date startDate, BigDecimal salary, Integer page,
                              Integer pageSize, String field) {
     return employeeRepository.findEmployeesByProperties(firstName, lastName, position, startDate, salary, PageRequest.of(page, pageSize, Sort.by(field)));
+  }
+
+  public List<Employee> find(int page, int size, String field, EmployeeFilterDTO dto) {
+
+    // Dans le cas où nous souhaitons avoir toutes les données dans la BD.
+    if (dto.getFirstName() == null && dto.getLastName() == null && dto.getPosition() == null && dto.getSalary() == null && dto.getStartDate() == null)
+      return employeeRepository.findAll(PageRequest.of(page, size, Sort.by(field))).getContent();
+
+    // Dans le cas où nous souhaitons appliquer un filtre sur les données à rechercher.
+    Employee employee = new Employee();
+    employee.setFirstName(dto.getFirstName());
+    employee.setLastName(dto.getLastName());
+    employee.setPosition(dto.getPosition());
+    employee.setSalary(dto.getSalary());
+    employee.setStartDate(dto.getStartDate());
+
+    ExampleMatcher exampleMatcher = ExampleMatcher.matchingAny().withIgnoreCase().withIgnoreNullValues();
+
+    Example<Employee> example = Example.of(employee, exampleMatcher);
+
+    return employeeRepository.findAll(example, PageRequest.of(page, size, Sort.by(field))).getContent();
+
   }
 
 }
