@@ -57,7 +57,11 @@ public class EmployeeService {
 
   public List<Employee> find(int page, int size, String field, EmployeeFilterDTO dto) {
 
-    // je crée l'employé à rechercher
+    // Dans le cas où nous souhaitons avoir toutes les données dans la BD.
+    if (dto.getFirstName() == null && dto.getLastName() == null && dto.getPosition() == null && dto.getSalary() == null && dto.getStartDate() == null)
+      return employeeRepository.findAll(PageRequest.of(page, size, Sort.by(field))).getContent();
+
+    // Dans le cas où nous souhaitons appliquer un filtre sur les données à rechercher.
     Employee employee = new Employee();
     employee.setFirstName(dto.getFirstName());
     employee.setLastName(dto.getLastName());

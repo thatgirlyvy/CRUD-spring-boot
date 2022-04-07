@@ -47,9 +47,14 @@ public class EmployeesController {
 
         try {
           
-          Date start = dateFormat.parse(startDate);
+          Date start = null;
+          Position pos = null;
 
-          Position pos = Position.valueOf(position.toUpperCase());
+          if (startDate != null)
+            start = dateFormat.parse(startDate);
+            
+          if (position != null)
+            pos = Position.valueOf(position.toUpperCase());
 
           EmployeeFilterDTO dto = new EmployeeFilterDTO(firstName, lastName, pos, start, salary);
 
