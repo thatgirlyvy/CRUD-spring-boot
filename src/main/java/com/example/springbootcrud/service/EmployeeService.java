@@ -1,10 +1,7 @@
 package com.example.springbootcrud.service;
 
 import java.math.BigDecimal;
-import java.util.Date;
-import java.util.List;
-import java.util.Optional;
-import java.util.UUID;
+import java.util.*;
 
 import com.example.springbootcrud.model.Position;
 import com.example.springbootcrud.model.dto.EmployeeFilterDTO;
@@ -12,6 +9,7 @@ import org.springframework.data.domain.Example;
 import org.springframework.data.domain.ExampleMatcher;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
 import com.example.springbootcrud.model.Employee;
@@ -33,13 +31,35 @@ public class EmployeeService {
     return employeeRepository.save(employee);
   }
 
-
-  public void removeAll(List<UUID> ids) {
-    ids.forEach(employeeRepository::deleteById);
+  public Employee update(Employee employee) {
+    Employee employee1 = employeeRepository.findById(employee.getId()).orElse(null);
+    System.out.println(employee);
+    if(employee1 == null) {
+      System.out.println("employee not found");
+      return employeeRepository.save(employee);
+    } else {
+      employee1.setFirstName(employee.getFirstName());
+      employee1.setLastName(employee.getLastName());
+      employee1.setPosition(employee.getPosition());
+      employee1.setStartDate(employee.getStartDate());
+      employee1.setSalary(employee.getSalary());
+      employeeRepository.save(employee1);
+    }
+    return employee;
   }
 
-  public Optional<Employee> get(UUID uuid) {
-    return employeeRepository.findById(uuid);
+  public boolean deleteById(UUID uuid) {
+      Employee employee = employeeRepository.getById(uuid);
+      if (employee != null) {
+        employeeRepository.deleteById(uuid);
+        return true;
+      }
+      return  false;
+    }
+
+
+  public Employee getById(UUID uuid) {
+    return employeeRepository.findById(uuid).orElse(null);
   }
 
   public List<Employee> list(String firstName, String lastName, Position position, Date startDate, BigDecimal salary, Integer page,
@@ -67,6 +87,10 @@ public class EmployeeService {
 
     return employeeRepository.findAll(example, PageRequest.of(page, size, Sort.by(field))).getContent();
 
+  }
+
+  public List<Employee> findAll() {
+    return employeeRepository.findAll();
   }
 
 }

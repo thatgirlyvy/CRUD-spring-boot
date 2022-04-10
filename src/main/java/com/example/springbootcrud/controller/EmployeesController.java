@@ -7,6 +7,7 @@ import java.util.*;
 
 import com.example.springbootcrud.model.Position;
 import com.example.springbootcrud.model.dto.EmployeeFilterDTO;
+import com.example.springbootcrud.model.dto.EmployeePaginatedDTO;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -27,19 +28,16 @@ public class EmployeesController {
   }
 
   @GetMapping("{id}")
-  public ResponseEntity<Employee> get(@PathVariable UUID id) {
-    return employeeService.get(id)
-      .map(ResponseEntity::ok)
-      .orElse(ResponseEntity.notFound()
-        .build());
+  public Employee getById(@PathVariable UUID id) {
+    return employeeService.getById(id);
   }
 
 
   @GetMapping
-  public ResponseEntity<List<Employee>> list(@RequestParam(required = false) String firstName, @RequestParam(required = false) String lastName,
-                                             @RequestParam(required = false) String position, @RequestParam(required = false) String startDate,
-                                             @RequestParam(required = false) BigDecimal salary, @RequestParam(defaultValue = "0") Integer page,
-                                             @RequestParam(defaultValue = "5") Integer pageSize, @RequestParam(defaultValue = "id") String field){
+  public ResponseEntity<EmployeePaginatedDTO> list(@RequestParam(required = false) String firstName, @RequestParam(required = false) String lastName,
+                                                   @RequestParam(required = false) String position, @RequestParam(required = false) String startDate,
+                                                   @RequestParam(required = false) BigDecimal salary, @RequestParam(defaultValue = "0") Integer page,
+                                                   @RequestParam(defaultValue = "5") Integer pageSize, @RequestParam(defaultValue = "id") String field){
     SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
 
     try {
@@ -58,7 +56,9 @@ public class EmployeesController {
 
       List<Employee> employees = employeeService.find(page, pageSize, field, dto);
 
-      return ResponseEntity.ok(employees);
+      EmployeePaginatedDTO paginatedDTO = new EmployeePaginatedDTO(employees, employeeService.findAll().size());
+
+      return ResponseEntity.ok(paginatedDTO);
 
     } catch (ParseException e) {
       throw new ResponseStatusException(HttpStatus.BAD_REQUEST);
@@ -66,19 +66,17 @@ public class EmployeesController {
   }
 
   @PostMapping
-  public UUID save(@RequestBody Employee employee) {
-    return employeeService.save(employee)
-      .getId();
-  }
-
-  @PutMapping("{id}")
-  public Employee edit(@PathVariable UUID id, @RequestBody Employee employee) {
-    employee.setId(id);
+  public Employee save(@RequestBody Employee employee) {
     return employeeService.save(employee);
   }
 
-  @PostMapping("/delete")
-  public void remove(@RequestBody List<UUID> ids) {
-    employeeService.removeAll(ids);
+  @PutMapping
+  public Employee update(@RequestBody Employee employee){
+    return employeeService.update(employee);
+  }
+
+  @DeleteMapping("{id}")
+  public boolean delete(@PathVariable UUID uuid) {
+    return employeeService.deleteById(uuid);
   }
 }

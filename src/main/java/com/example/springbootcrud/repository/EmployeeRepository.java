@@ -9,4 +9,6 @@ import java.util.UUID;
 @Repository
 public interface EmployeeRepository extends MongoRepository<Employee, UUID>, EmployeeCustomRepository {
 
+  Employee getById(UUID uuid);
+
 }
