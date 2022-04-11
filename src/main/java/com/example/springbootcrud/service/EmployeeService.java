@@ -9,7 +9,6 @@ import org.springframework.data.domain.Example;
 import org.springframework.data.domain.ExampleMatcher;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
-import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
 import com.example.springbootcrud.model.Employee;
@@ -49,12 +48,12 @@ public class EmployeeService {
   }
 
   public boolean deleteById(UUID uuid) {
-      Employee employee = employeeRepository.getById(uuid);
-      if (employee != null) {
-        employeeRepository.deleteById(uuid);
-        return true;
-      }
-      return  false;
+    Employee employee = employeeRepository.getById(uuid);
+    if(employee != null) {
+      employeeRepository.deleteById(uuid);
+      return true;
+    }
+    return false;
     }
 
 

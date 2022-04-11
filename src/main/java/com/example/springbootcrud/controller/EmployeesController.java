@@ -75,7 +75,7 @@ public class EmployeesController {
     return employeeService.update(employee);
   }
 
-  @DeleteMapping("{id}")
+  @DeleteMapping("{uuid}")
   public boolean delete(@PathVariable UUID uuid) {
     return employeeService.deleteById(uuid);
   }
