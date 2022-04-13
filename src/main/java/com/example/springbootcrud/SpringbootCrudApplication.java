@@ -10,4 +10,5 @@ public class SpringbootCrudApplication {
 		SpringApplication.run(SpringbootCrudApplication.class, args);
 	}
 
+
 }

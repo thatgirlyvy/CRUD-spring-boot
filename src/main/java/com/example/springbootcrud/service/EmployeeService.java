@@ -1,14 +1,13 @@
 package com.example.springbootcrud.service;
 
 import java.math.BigDecimal;
+import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.*;
 
-import com.example.springbootcrud.model.Position;
 import com.example.springbootcrud.model.dto.EmployeeFilterDTO;
-import org.springframework.data.domain.Example;
-import org.springframework.data.domain.ExampleMatcher;
-import org.springframework.data.domain.PageRequest;
-import org.springframework.data.domain.Sort;
+import com.example.springbootcrud.model.dto.EmployeePaginatedDTO;
+import org.springframework.data.domain.*;
 import org.springframework.stereotype.Service;
 
 import com.example.springbootcrud.model.Employee;
@@ -61,16 +60,18 @@ public class EmployeeService {
     return employeeRepository.findById(uuid).orElse(null);
   }
 
-  public List<Employee> list(String firstName, String lastName, Position position, Date startDate, BigDecimal salary, Integer page,
+  public List<Employee> list(String firstName, String lastName, String position, LocalDate startDate, BigDecimal salary, Integer page,
                              Integer pageSize, String field) {
     return employeeRepository.findEmployeesByProperties(firstName, lastName, position, startDate, salary, PageRequest.of(page, pageSize, Sort.by(field)));
   }
 
-  public List<Employee> find(int page, int size, String field, EmployeeFilterDTO dto) {
+  public EmployeePaginatedDTO find(int page, int size, String field, EmployeeFilterDTO dto) {
 
     // Dans le cas où nous souhaitons avoir toutes les données dans la BD.
-    if (dto.getFirstName() == null && dto.getLastName() == null && dto.getPosition() == null && dto.getSalary() == null && dto.getStartDate() == null)
-      return employeeRepository.findAll(PageRequest.of(page, size, Sort.by(field))).getContent();
+    if (dto.getFirstName() == null && dto.getLastName() == null && dto.getPosition() == null && dto.getStartDate() == null && dto.getSalary() == null){
+      Page<Employee> pageFilter = employeeRepository.findAll(PageRequest.of(page, size, Sort.by(field)));
+      return new EmployeePaginatedDTO(pageFilter.getContent(), pageFilter.getTotalElements()) ;
+  }
 
     // Dans le cas où nous souhaitons appliquer un filtre sur les données à rechercher.
     Employee employee = new Employee();
@@ -84,12 +85,15 @@ public class EmployeeService {
 
     Example<Employee> example = Example.of(employee, exampleMatcher);
 
-    return employeeRepository.findAll(example, PageRequest.of(page, size, Sort.by(field))).getContent();
+    Page<Employee> pageFind = employeeRepository.findAll(example, PageRequest.of(page, size, Sort.by(field)));
+
+    return new EmployeePaginatedDTO(pageFind.getContent(), pageFind.getTotalElements()) ;
 
   }
 
   public List<Employee> findAll() {
     return employeeRepository.findAll();
   }
+
 
 }

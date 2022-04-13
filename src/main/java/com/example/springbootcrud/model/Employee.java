@@ -2,7 +2,7 @@ package com.example.springbootcrud.model;
 import org.springframework.data.annotation.Id;
 
 import java.math.BigDecimal;
-import java.util.Date;
+import java.time.LocalDate;
 import java.util.UUID;
 
 public class Employee {
@@ -11,8 +11,8 @@ public class Employee {
 
   private String firstName;
   private String lastName;
-  private Position position;
-  private Date startDate;
+  private String position;
+  private LocalDate startDate;
   private BigDecimal salary;
 
   public UUID getId() {
@@ -39,19 +39,19 @@ public class Employee {
     this.lastName = lastName;
   }
 
-  public Position getPosition() {
+  public String getPosition() {
     return position;
   }
 
-  public void setPosition(Position position) {
+  public void setPosition(String position) {
     this.position = position;
   }
 
-  public Date getStartDate() {
+  public LocalDate getStartDate() {
     return startDate;
   }
 
-  public void setStartDate(Date startDate) {
+  public void setStartDate(LocalDate startDate) {
     this.startDate = startDate;
   }
 

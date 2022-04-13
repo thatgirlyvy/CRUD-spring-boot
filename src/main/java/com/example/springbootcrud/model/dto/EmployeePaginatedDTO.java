@@ -8,9 +8,9 @@ public class EmployeePaginatedDTO {
 
   private List<Employee> data;
 
-  private Integer totalElements;
+  private Long totalElements;
 
-  public EmployeePaginatedDTO( List<Employee> data, Integer totalElements) {
+  public EmployeePaginatedDTO( List<Employee> data, Long totalElements) {
     this.data = data;
     this.totalElements = totalElements;
   }
@@ -23,11 +23,11 @@ public class EmployeePaginatedDTO {
     this.data = data;
   }
 
-  public Integer getTotalElements() {
+  public Long getTotalElements() {
     return totalElements;
   }
 
-  public void setTotalElements(Integer totalElements) {
+  public void setTotalElements(Long totalElements) {
     this.totalElements = totalElements;
   }
 }

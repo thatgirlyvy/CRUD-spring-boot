@@ -1,8 +1,8 @@
 package com.example.springbootcrud.model.dto;
 
-import com.example.springbootcrud.model.Position;
-
 import java.math.BigDecimal;
+import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.Date;
 
 public class EmployeeFilterDTO {
@@ -11,16 +11,16 @@ public class EmployeeFilterDTO {
 
   private String lastName;
 
-  private Position position;
+  private String position;
 
-  private Date startDate;
+  private LocalDate startDate;
 
   private BigDecimal salary;
 
   public EmployeeFilterDTO() {
   }
 
-  public EmployeeFilterDTO(String firstName, String lastName, Position position, Date startDate, BigDecimal salary) {
+  public EmployeeFilterDTO(String firstName, String lastName, String position, LocalDate startDate, BigDecimal salary) {
     this.firstName = firstName;
     this.lastName = lastName;
     this.position = position;
@@ -36,11 +36,11 @@ public class EmployeeFilterDTO {
     return lastName;
   }
 
-  public Position getPosition() {
+  public String getPosition() {
     return position;
   }
 
-  public Date getStartDate() {
+  public LocalDate getStartDate() {
     return startDate;
   }
 

@@ -1,11 +1,14 @@
 package com.example.springbootcrud.controller;
 
 import java.math.BigDecimal;
+import java.text.DateFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
+import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.*;
 
-import com.example.springbootcrud.model.Position;
 import com.example.springbootcrud.model.dto.EmployeeFilterDTO;
 import com.example.springbootcrud.model.dto.EmployeePaginatedDTO;
 import org.springframework.http.HttpStatus;
@@ -38,31 +41,28 @@ public class EmployeesController {
                                                    @RequestParam(required = false) String position, @RequestParam(required = false) String startDate,
                                                    @RequestParam(required = false) BigDecimal salary, @RequestParam(defaultValue = "0") Integer page,
                                                    @RequestParam(defaultValue = "5") Integer pageSize, @RequestParam(defaultValue = "id") String field){
-    SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
 
-    try {
+ //   try {
 
-      Date start = null;
+      LocalDate start = null;
 
-      Position pos = null;
+      String pos = null;
 
       if (startDate != null)
-        start = dateFormat.parse(startDate);
+        start = LocalDate.parse(startDate, DateTimeFormatter.ofPattern("yyyy-MM-dd"));
 
       if (position != null)
-        pos = Position.valueOf(position.toUpperCase());
+        pos = String.valueOf(position.toUpperCase());
 
       EmployeeFilterDTO dto = new EmployeeFilterDTO(firstName, lastName, pos, start, salary);
 
-      List<Employee> employees = employeeService.find(page, pageSize, field, dto);
+      EmployeePaginatedDTO employees = employeeService.find(page, pageSize, field, dto);
 
-      EmployeePaginatedDTO paginatedDTO = new EmployeePaginatedDTO(employees, employeeService.findAll().size());
+      return ResponseEntity.ok(employees);
 
-      return ResponseEntity.ok(paginatedDTO);
-
-    } catch (ParseException e) {
-      throw new ResponseStatusException(HttpStatus.BAD_REQUEST);
-    }
+//    } catch (ParseException e) {
+//      throw new ResponseStatusException(HttpStatus.BAD_REQUEST);
+//    }
   }
 
   @PostMapping

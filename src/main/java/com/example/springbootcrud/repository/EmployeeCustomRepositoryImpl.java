@@ -1,7 +1,6 @@
 package com.example.springbootcrud.repository;
 
 import com.example.springbootcrud.model.Employee;
-import com.example.springbootcrud.model.Position;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.mongodb.core.MongoTemplate;
@@ -10,6 +9,8 @@ import org.springframework.data.mongodb.core.query.Query;
 import org.springframework.stereotype.Repository;
 
 import java.math.BigDecimal;
+import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -21,7 +22,7 @@ public class EmployeeCustomRepositoryImpl implements EmployeeCustomRepository{
   MongoTemplate mongoTemplate;
 
   public List<Employee> findEmployeesByProperties(String firstName, String lastName,
-                                                  Position position, Date startDate,
+                                                  String position, LocalDate startDate,
                                                   BigDecimal salary, Pageable page) {
     final Query query = new Query().with(page);
 //     query.fields().include("id").include("name");
